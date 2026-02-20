@@ -17,4 +17,18 @@ docker ps -a                    # Todos containers
 docker stop ID                  # Para container
 docker rm ID                    # Remove container
 docker logs ID                  # Mostra logs
-docker exec -it ID bash         # Acessa c
+docker exec -it ID bash         # Acessa container
+
+
+# Docker MySQL - Comandos Essenciais
+
+docker pull mysql               # Baixa a imagem oficial do MySQL do Docker Hub.
+docker run -d --name mysql-A -e MYSQL_ROOT_PASSWORD=senha123 -p 3306:3306 mysql	       # Cria e inicia um container MySQL em background com senha e porta mapeada.
+docker exec -it mysql-A bash	  # Abre um terminal bash dentro do container.
+mysql -u root -p	              # Acessa o MySQL dentro do container; pede a senha root.
+mysql -h 127.0.0.1 -P 3306 -u root -p	          # Conecta no MySQL do container fora do container (via host).
+docker stop mysql-A	            # Para o container MySQL que está rodando.
+docker start mysql-A	          # Inicia um container que já existe e está parado.
+docker restart mysql-A	        # Para e inicia novamente o container.
+docker logs mysql-A	            # Mostra os logs de inicialização e erros do container.
+docker rm mysql-A	              # Remove o container (use -f se ele estiver rodando).
