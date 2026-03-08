@@ -1,62 +1,197 @@
-🧠 Banco de Dados
---
+📦 Banco de Dados
+----
+SHOW DATABASES;                 -- Lista todos os bancos de dados
 
-SHOW DATABASES;                  # Lista todos os bancos
+CREATE DATABASE nome_db;        -- Cria um banco de dados
 
-CREATE DATABASE nome_db;         # Cria um banco
+CREATE DATABASE IF NOT EXISTS nome_db;  -- Cria apenas se não existir
 
-USE nome_db;                     # Seleciona o banco
+USE nome_db;                    -- Seleciona o banco
 
-DROP DATABASE nome_db;           # Remove o banco
+DROP DATABASE nome_db;          -- Remove o banco de dados
+
+ALTER DATABASE nome_db CHARACTER SET utf8mb4; -- Altera configurações
 
 ---
 📂 Tabelas
 ---
-SHOW TABLES;                     # Lista tabelas do banco atual
+SHOW TABLES;                    -- Lista tabelas do banco atual
 
 CREATE TABLE usuarios (
     id INT AUTO_INCREMENT PRIMARY KEY,
     nome VARCHAR(100) NOT NULL
-);                               # Cria uma tabela
+);                               -- Cria tabela
 
-DESC usuarios;                   # Mostra estrutura da tabela
+CREATE TABLE IF NOT EXISTS usuarios (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    nome VARCHAR(100)
+);                               -- Cria apenas se não existir
 
-SHOW CREATE TABLE usuarios;      # Mostra SQL completo da criação
+DESC usuarios;                   -- Mostra estrutura da tabela
 
-DROP TABLE usuarios;             # Remove a tabela
+DESCRIBE usuarios;               -- Mesmo comando do DESC
 
---- 
+SHOW CREATE TABLE usuarios;      -- Mostra SQL completo da criação
+
+DROP TABLE usuarios;             -- Remove tabela
+
+TRUNCATE TABLE usuarios;         -- Remove todos os registros
+
+RENAME TABLE usuarios TO clientes; -- Renomeia tabela
+
+---
+🧱 Tipos de Dados Comuns
+---
+INT              -- Número inteiro
+BIGINT           -- Inteiro grande
+DECIMAL(10,2)    -- Número decimal
+
+VARCHAR(255)     -- Texto variável
+CHAR(10)         -- Texto fixo
+
+TEXT             -- Texto grande
+
+DATE             -- Data
+DATETIME         -- Data e hora
+TIMESTAMP        -- Timestamp automático
+
+BOOLEAN          -- Verdadeiro ou falso
+
+---
 ➕ Inserindo Dados
 ---
 INSERT INTO usuarios (nome)
-VALUES ('Thiago');               # Insere um registro
+VALUES ('Thiago');               -- Insere um registro
 
 INSERT INTO usuarios (nome)
-VALUES ('Ana'), ('Carlos');      # Insere múltiplos registros
+VALUES ('Ana'), ('Carlos');      -- Insere múltiplos registros
+
+INSERT INTO usuarios
+VALUES (NULL, 'Maria');          -- Inserção direta
+
+INSERT INTO usuarios (nome)
+SELECT nome FROM clientes;       -- Inserção via SELECT
 
 ---
 🔍 Consultando Dados
 ---
-SELECT * FROM usuarios;          # Lista todos os registros
+SELECT * FROM usuarios;          -- Lista todos os registros
 
-SELECT nome FROM usuarios;       # Seleciona coluna específica
-
-SELECT * FROM usuarios
-WHERE id = 1;                    # Filtro
+SELECT nome FROM usuarios;       -- Seleciona coluna específica
 
 SELECT * FROM usuarios
-ORDER BY nome ASC;               # Ordena
+WHERE id = 1;                    -- Filtro
 
-SELECT COUNT(*) FROM usuarios;   # Conta registros
+SELECT * FROM usuarios
+WHERE nome = 'Ana';
+
+SELECT * FROM usuarios
+ORDER BY nome ASC;               -- Ordena crescente
+
+SELECT * FROM usuarios
+ORDER BY nome DESC;              -- Ordena decrescente
+
+SELECT * FROM usuarios
+LIMIT 10;                        -- Limita resultados
+
+SELECT * FROM usuarios
+LIMIT 5 OFFSET 10;               -- Paginação
+
+SELECT COUNT(*) FROM usuarios;   -- Conta registros
+
+SELECT DISTINCT nome FROM usuarios; -- Remove duplicados
+
+---
+🔎 Operadores de Filtro
+---
+SELECT * FROM usuarios
+WHERE id > 10;
+
+SELECT * FROM usuarios
+WHERE id BETWEEN 5 AND 10;
+
+SELECT * FROM usuarios
+WHERE nome LIKE 'A%';           -- Começa com A
+
+SELECT * FROM usuarios
+WHERE nome LIKE '%a';           -- Termina com a
+
+SELECT * FROM usuarios
+WHERE nome LIKE '%an%';         -- Contém "an"
+
+SELECT * FROM usuarios
+WHERE id IN (1,2,3);
+
+SELECT * FROM usuarios
+WHERE nome IS NULL;
+
+SELECT * FROM usuarios
+WHERE nome IS NOT NULL;
+
+---
 ✏ Atualizando Dados
+---
 UPDATE usuarios
 SET nome = 'Novo Nome'
 WHERE id = 1;
+
+UPDATE usuarios
+SET nome = 'João'
+WHERE nome = 'Thiago';
+
+UPDATE usuarios
+SET nome = 'Carlos'
+WHERE id IN (1,2,3);
 
 ---
 ❌ Removendo Dados
 ---
 DELETE FROM usuarios
-WHERE id = 1;                    # Remove registro específico
+WHERE id = 1;                   -- Remove registro específico
 
-TRUNCATE TABLE usuarios;         # Remove TODOS os registros
+DELETE FROM usuarios
+WHERE nome = 'Ana';
+
+DELETE FROM usuarios;           -- Remove todos os registros
+
+TRUNCATE TABLE usuarios;        -- Remove todos e reseta AUTO_INCREMENT
+
+---
+🔗 Chaves e Relacionamentos
+---
+CREATE TABLE pedidos (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    usuario_id INT,
+    FOREIGN KEY (usuario_id) REFERENCES usuarios(id)
+);
+
+---
+🔗 JOIN (Relacionar Tabelas)
+---
+SELECT *
+FROM usuarios
+INNER JOIN pedidos
+ON usuarios.id = pedidos.usuario_id;
+
+SELECT *
+FROM usuarios
+LEFT JOIN pedidos
+ON usuarios.id = pedidos.usuario_id;
+
+SELECT *
+FROM usuarios
+RIGHT JOIN pedidos
+ON usuarios.id = pedidos.usuario_id;
+
+---
+📊 Funções de Agregação
+---
+SELECT COUNT(*) FROM usuarios;      -- Contagem
+
+SELECT MAX(id) FROM usuarios;       -- Maior valor
+
+SELECT MIN(id) FROM usuarios;       -- Menor valor
+
+SELECT AVG(id) FROM usuarios;       -- Média
+
+SELECT SUM(id) FROM usuarios;       -- Soma
